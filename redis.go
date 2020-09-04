@@ -117,7 +117,7 @@ func (r *redisDB) Name() string {
 	return r.name
 }
 
-func (r *redisDB) Get() *redis.Client {
+func (r *redisDB) Get() interface{} {
 	return r.client
 }
 
