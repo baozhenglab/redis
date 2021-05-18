@@ -45,6 +45,8 @@ type RedisDBOpt struct {
 	RedisUri  string
 	MaxActive int
 	MaxIde    int
+	Password  string
+	DB        int
 }
 
 type redisDB struct {
@@ -70,6 +72,9 @@ func NewRedisDB(name, flagPrefix string) *redisDB {
 }
 
 func (r *redisDB) GetPrefix() string {
+	if r.Prefix == "" {
+		return r.name
+	}
 	return r.Prefix
 }
 
@@ -83,9 +88,12 @@ func (r *redisDB) InitFlags() {
 		prefix += "-"
 	}
 
-	flag.StringVar(&r.RedisUri, prefix+"go-redis-uri", "", "(For go-redis) Redis connection-string. Ex: redis://localhost/0")
+	flag.StringVar(&r.RedisUri, prefix+"go-redis-uri", "", "(For go-redis) Redis connection-string. Ex: redis://localhost")
+	flag.StringVar(&r.Password, prefix+"go-redis-password", "", "Password connect redis database")
+	flag.IntVar(&r.DB, prefix+"go-redis-db", 0, "DB connect redis default 0")
 	flag.IntVar(&r.MaxActive, prefix+"go-redis-pool-max-active", defaultRedisMaxActive, "(For go-redis) Override redis pool MaxActive")
 	flag.IntVar(&r.MaxIde, prefix+"go-redis-pool-max-idle", defaultRedisMaxIdle, "(For go-redis) Override redis pool MaxIdle")
+
 }
 
 func (r *redisDB) Configure() error {
@@ -99,6 +107,8 @@ func (r *redisDB) Configure() error {
 	client := redis.NewClient(&redis.Options{
 		Addr:         r.RedisUri,
 		PoolSize:     r.MaxActive,
+		Password:     r.Password,
+		DB:           r.DB,
 		MinIdleConns: r.MaxIde,
 	})
 
