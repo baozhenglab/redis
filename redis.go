@@ -29,7 +29,7 @@ package redis
 import (
 	"flag"
 
-	"github.com/baozhenglab/go-sdk/logger"
+	"github.com/baozhenglab/go-sdk/v2/logger"
 	"github.com/go-redis/redis"
 )
 
